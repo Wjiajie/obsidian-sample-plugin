@@ -1,6 +1,22 @@
 import esbuild from "esbuild";
 import process from "process";
+import fs from "fs-extra";
+import path from "path";
 import builtins from "builtin-modules";
+
+const targetDir = "L:/obsidian-test-llm/.obsidian/plugins/siga-plugin";
+const filesToCopy = ["main.js", "manifest.json", "styles.css", "data.json"];
+
+const copyFiles = async () => {
+	for (const file of filesToCopy) {
+		try {
+			await fs.copy(file, path.join(targetDir, file), { overwrite: true });
+			console.log(`Copied ${file} to ${targetDir}`);
+		} catch (err) {
+			console.error(`Error copying ${file}:`, err);
+		}
+	}
+};
 
 const banner =
 `/*
@@ -43,7 +59,22 @@ const context = await esbuild.context({
 
 if (prod) {
 	await context.rebuild();
+	await copyFiles();
 	process.exit(0);
 } else {
 	await context.watch();
+	await copyFiles();
+	console.log("Watching for changes...");
+	
+	// 监听文件变化
+	fs.watch('.', { recursive: false }, async (eventType, filename) => {
+		if (filesToCopy.includes(filename)) {
+			try {
+				await fs.copy(filename, path.join(targetDir, filename), { overwrite: true });
+				console.log(`Updated ${filename} in ${targetDir}`);
+			} catch (err) {
+				console.error(`Error copying ${filename}:`, err);
+			}
+		}
+	});
 }

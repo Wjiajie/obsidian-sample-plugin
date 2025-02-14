@@ -48,8 +48,11 @@ Quick starting guide for new plugin devs:
 
 - Clone this repo.
 - Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+- 使用 `npm i` 安装依赖
+- 使用 `npm run dev` 启动开发环境
+- 使用 `npm run build` 构建项目
+- 使用 `npm test` 运行测试
+- 使用 `npm run format` 格式化代码
 
 ## Manually installing the plugin
 
